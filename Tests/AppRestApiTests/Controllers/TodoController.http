@@ -1,0 +1,29 @@
+POST http://{{host}}/todos HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "title": "todo_thing_001"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+});
+
+client.global.set("user_id_created", response.body.id);
+%}
+
+###
+
+
+GET http://{{host}}/todos HTTP/1.1
+Authorization: Bearer {{userToken}}
+
+###
+
+
+DELETE http://{{host}}/todos/{{user_id_created}} HTTP/1.1
+Authorization: Bearer {{userToken}}
+
+###

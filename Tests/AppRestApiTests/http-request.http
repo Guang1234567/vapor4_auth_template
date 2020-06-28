@@ -1,0 +1,23 @@
+GET http://{{host}}
+
+> {%
+client.test("Baseline", function () {
+    client.assert(response.status == 200, '状态码为非200');
+    client.log(response.headers)
+    client.log(response.body)
+    client.log(response.body.msg)
+});
+
+/**
+ * client.global.set 后，可以被后续请求通过{{demo}}获取该变量值，以实现更多连贯操作
+ */
+client.global.set('demo', 'test');
+%}
+
+###
+
+
+
+
+
+

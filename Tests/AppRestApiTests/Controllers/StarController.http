@@ -1,0 +1,33 @@
+###
+POST http://{{host}}/galaxies HTTP/1.1
+content-type: application/json
+
+{
+  "name": "银河系"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+    client.log("\n");
+    client.log("galaxy.id = " + response.body.id);
+    client.log("\n\n");
+});
+
+client.global.set("galaxy_for_star", response.body.id);
+%}
+
+
+
+###
+POST http://{{host}}/stars HTTP/1.1
+content-type: application/json
+
+{
+  "name": "Sun",
+  "galaxy": {
+    "id": "{{galaxy_for_star}}"
+  }
+}
+
+###

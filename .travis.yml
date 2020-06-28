@@ -1,0 +1,36 @@
+language: generic
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode11.5
+      env: SCHEME="Run"
+
+
+before_install:
+  - gem install xcpretty
+  - brew tap vapor/tap
+  - brew update
+  - brew install vapor
+
+
+script:
+  - swift build -Xswiftc -g -c debug
+  - swift package generate-xcodeproj
+  - xcodebuild -scheme $SCHEME -enableCodeCoverage YES test | xcpretty
+
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+#
+deploy:
+  provider: releases
+  api_key:
+    secure: Y1fkSiMXxU0wJEZ12PtfuWheTcIFD870iHpCRollKyVjobI50MF0yYWHm8jMtwHCYLKwmf+SZwp/w+emRZ6iho1n5yCo+zPeAcZSc2XCi7pzGzJ5kKvi3Lgh01BduTUI30+LqJ7XNk2HXH61Zl2eBZl4hFn6+Bc5BmCNyue2PKs2gVexpTub7X3abhdCR6frbdtC3lNW2HWiH/j4ccDE6Lmr1WJjFgM2QzoXVc56wWaUlXwOBPAmIG8AZM2nN7wKqV7znMJTNnE+hw7e1vtdLaV4QrNDDkya4f3Z1mgAJCNDQg8sIERvqdAg4NOh3Y090HR5QYHp8WejrvbKg/54KIdTE0L7TzLeYARG2NrqA0o4IezLGvbmlDL6vnwegNhSHp1IK89ZN2he/Tt4t0ONrcyKb7V4N6s5LKxzI24pvAjwG3pdqdO57iXus3CMksxaNW4F9ZaWaObSSi8zqFLqgyx8ZpTjy7zTso8xKyO/+/BpaD1BF8NJCzHKqgQmWbypyo4tNlRtyWsli7Eo2xcrEwTPU07CbYNbUnRfEj5hHc+Or/V0T6hgSnywaNs9crU9bedOn8Xh8myPamV17TGr282f7pwqCyIg+wms13PyhV5inNM7B7qbufXzQnM+Zu3OrBqKEVD7A1H3QxoLLhGJNe3gQKuFjXcC5Y/q68Y0WqQ=
+  file: ".build/debug/Run"
+  on:
+    tags: true
+    branch: master
+    repo: Guang1234567/vapor4_auth_template
+  skip_cleanup: 'true'
+  draft: true

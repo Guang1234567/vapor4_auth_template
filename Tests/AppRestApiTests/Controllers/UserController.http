@@ -1,0 +1,84 @@
+POST http://{{host}}/users HTTP/1.1
+content-type: application/json
+
+{
+  "name": "Vapor",
+  "email": "test@vapor.codes",
+  "password": "secret",
+  "confirmPassword": "secret"
+}
+
+###
+
+POST http://{{host}}/users HTTP/1.1
+content-type: application/json
+
+{
+  "name": "Vapor_002",
+  "email": "test_002@vapor.codes",
+  "password": "secret",
+  "confirmPassword": "secret"
+}
+
+###
+
+POST http://{{host}}/login HTTP/1.1
+# echo -n "test@vapor.codes:secret" | base64
+Authorization: Basic dGVzdEB2YXBvci5jb2RlczpzZWNyZXQ=
+
+> {%
+client.test("Request executed successfully", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+    client.log("\n");
+    client.log("userToken = " + response.body.value);
+    client.log("\n\n");
+});
+
+client.global.set("userToken", response.body.value);
+%}
+
+###
+
+
+#POST http://{{host}}/login HTTP/1.1
+## echo -n "test_002@vapor.codes:secret" | base64
+#Authorization: Basic dGVzdF8wMDJAdmFwb3IuY29kZXM6c2VjcmV0
+#
+#> {%
+#client.test("Request executed successfully", function() {
+#    client.assert(response.status === 200, "Response status is not 200");
+#    client.log("\n");
+#    client.log("userToken = " + response.body.value);
+#    client.log("\n\n");
+#});
+#
+#client.global.set("userToken", response.body.value);
+#%}
+
+###
+
+GET http://{{host}}/me HTTP/1.1
+Authorization: Bearer {{userToken}}
+
+###
+
+POST http://{{host}}/login HTTP/1.1
+Authorization: Bearer {{userToken}}
+
+> {%
+client.test("Request executed successfully", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+    client.log("\n");
+    client.log("userToken = " + response.body.value);
+    client.log("\n\n");
+});
+
+client.global.set("userToken", response.body.value);
+%}
+
+###
+
+POST http://{{host}}/logout HTTP/1.1
+Authorization: Bearer {{userToken}}
+
+###

@@ -1,0 +1,17 @@
+GET http://{{host}}/galaxies HTTP/1.1
+Accept: application/json
+
+###
+
+POST http://{{host}}/galaxies HTTP/1.1
+#content-length: 21
+content-type: application/json
+
+{
+  "name": "Milky Way"
+}
+
+###
+
+
+
