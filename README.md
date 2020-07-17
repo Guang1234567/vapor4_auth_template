@@ -37,9 +37,19 @@ vapor new demo_swift_server_vapor_auth --template https://github.com/Guang123456
 
 ### macOS
 
-1) Serving `HTTPS` by `nginx`
+#### Serving `HTTPS` by `nginx`
 
-    1) install `nginx`
+    1) Certificate generation 
+    
+    Also because HTTP/2 is a secure protocol by default, you'll need your own SSL certificate. You can generate a self-signed cert.pem and a cert.key files with the following command (fill out the details with some fake data and press enter).
+    
+    ```bash
+        cd ./etc/nginx
+        
+        openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout cert.key -out cert.pem
+    ```
+
+    2) install `nginx`
     
     https://docs.vapor.codes/4.0/deploy/nginx/
     
@@ -47,17 +57,17 @@ vapor new demo_swift_server_vapor_auth --template https://github.com/Guang123456
         brew install nginx
     ```
    
-    2) cfg ngnix
+    3) cfg ngnix
     
     https://github.com/Guang1234567/vapor4_auth_template/blob/b0f2b7e441faee47b11a329a966f18d6ad4b625f/etc/nginx/nginx.conf#L117-L153
     
-    3) start `nginx`
+    4) start `nginx`
     
     ```bash
         nginx -c ~/dev_kit/workspace/demo_swift_server_vapor_auth/etc/nginx/nginx.conf
     ```
 
-    4) check `HTTPS` Env
+    5) check `HTTPS` Env
    
     Using your smartphone which under the same wifi with your macbookpro to browse:
    
@@ -82,8 +92,22 @@ vapor new demo_swift_server_vapor_auth --template https://github.com/Guang123456
         Thank you for using nginx.
    ```
    
+   6) other command for nginx
    
-2) Start vapor web application and serving on `http://127.0.0.1:8080`
+   ```bash
+   
+   # quit nginx
+   
+   nginx -s quit
+   
+   
+   # dry run and test
+   
+   nginx -c ~/dev_kit/workspace/demo_swift_server_vapor_auth/etc/nginx/nginx.conf -t
+
+   ```
+   
+#### Start vapor web application and serving on `http://127.0.0.1:8080`
       
   ```bash
     swift build -Xswiftc -g -c debug && .build/debug/Run --log debug --env development.custom_name
