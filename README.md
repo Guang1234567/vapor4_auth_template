@@ -49,7 +49,7 @@ vapor new demo_swift_server_vapor_auth --template https://github.com/Guang123456
    
     2) cfg ngnix
     
-    https://github.com/Guang1234567/vapor4_auth_template/blob/82953c8f1d70a335ca0dbe8541965f5fc2851587/etc/nginx/nginx.conf#L117-L153
+    https://github.com/Guang1234567/vapor4_auth_template/blob/b0f2b7e441faee47b11a329a966f18d6ad4b625f/etc/nginx/nginx.conf#L117-L153
     
     3) start `nginx`
     
@@ -126,7 +126,7 @@ then access vapor web application via `HTTPS`
       
 3) Test API via CLion with `swift plugin`
 
-https://github.com/Guang1234567/vapor4_auth_template/blob/82953c8f1d70a335ca0dbe8541965f5fc2851587/Tests/AppRestApiTests/Controllers/UserController.http#L1-L9
+https://github.com/Guang1234567/vapor4_auth_template/blob/b0f2b7e441faee47b11a329a966f18d6ad4b625f/Tests/AppRestApiTests/Controllers/UserController.http#L1-L9
    
 ### Ubuntu
 
