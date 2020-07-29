@@ -11,15 +11,17 @@ let package = Package(
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0"),
+        .package(url: "https://github.com/vapor/queues-redis-driver.git", .branch("master")),
         .package(url: "https://github.com/Guang1234567/Swift_Coroutine_NIO2.git", .branch("master"))
     ],
     targets: [
         .target(
             name: "App",
             dependencies: [
+                .product(name: "Vapor", package: "vapor"),
                 .product(name: "Fluent", package: "fluent"),
                 .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
-                .product(name: "Vapor", package: "vapor"),
+                .product(name: "QueuesRedisDriver", package: "queues-redis-driver"),
                 "Swift_Coroutine_NIO2"
             ],
             swiftSettings: [

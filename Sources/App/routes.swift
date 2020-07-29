@@ -15,4 +15,5 @@ func routes(_ app: Application) throws {
     try app.register(collection: TodoController())
     try app.register(collection: GalaxyController())
     try app.register(collection: StarController())
+    try app.register(collection: EmailController())
 }

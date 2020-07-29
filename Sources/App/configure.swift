@@ -16,6 +16,8 @@ public func configure(_ app: Application) throws {
     try cfgMiddleware(app)
     try cfgDatabase(app)
 
+    try EmailController.configure(app)
+
     // register routes
     try routes(app)
 }
