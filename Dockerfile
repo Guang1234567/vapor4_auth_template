@@ -1,7 +1,7 @@
 # ================================
 # Build image
 # ================================
-FROM swift:5.2-bionic as build
+FROM swift:5.2.2-bionic as build
 WORKDIR /build
 
 # First just resolve dependencies.
@@ -15,7 +15,7 @@ RUN swift package resolve
 COPY . .
 
 # Compile with optimizations
-RUN swift build --enable-test-discovery -c release
+RUN swift build --enable-test-discovery -Xswiftc -g -c debug -Xlinker -latomic
 
 # ================================
 # Run image
@@ -29,13 +29,18 @@ RUN useradd --user-group --create-home --system --skel /dev/null --home-dir /app
 WORKDIR /app
 
 # Copy build artifacts
-COPY --from=build --chown=vapor:vapor /build/.build/release /app
+COPY --from=build --chown=vapor:vapor /build/.build/debug /app
 # Uncomment the next line if you need to load resources from the `Public` directory
-#COPY --from=build --chown=vapor:vapor /build/Public /app/Public
+COPY --from=build --chown=vapor:vapor /build/Public /app/Public
+
+COPY --from=build --chown=vapor:vapor /build/.env /app
+COPY --from=build --chown=vapor:vapor /build/.env.development.docker.custom_name /app
 
 # Ensure all further commands run as the vapor user
 USER vapor:vapor
 
 # Start the Vapor service when the image is run, default to listening on 8080 in production environment 
 ENTRYPOINT ["./Run"]
-CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
+CMD ["serve", "--env", "development.docker.custom_name"]
+
+# CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
