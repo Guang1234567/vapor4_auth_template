@@ -33,6 +33,30 @@ brew install vapor
 vapor new demo_swift_server_vapor_auth --template https://github.com/Guang1234567/vapor4_auth_template
 ```
 
+## Peer by docker
+
+[repository/docker/lihansey/vapor4_auth_template](https://hub.docker.com/repository/docker/lihansey/vapor4_auth_template)
+
+```bash
+
+# 1)
+
+╰─ docker pull lihansey/vapor4_auth_template:latest
+
+# 2)
+
+╰─ docker-compose up app
+
+# 3) create database scheme and tables
+
+╰─ docker-compose up migrate
+
+# 4)
+
+╰─ broswer http://127.0.0.1:8080
+
+```
+
 ## Develop on `localhost`
 
 ### macOS
