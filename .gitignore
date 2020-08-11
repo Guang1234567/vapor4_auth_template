@@ -7,3 +7,5 @@ DerivedData/
 db.sqlite
 .swiftpm
 .idea
+docker/backup
+docker/db_data

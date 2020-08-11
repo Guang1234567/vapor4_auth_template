@@ -1,7 +1,7 @@
 # ================================
 # Build image
 # ================================
-FROM swift:5.2.2-bionic as build
+FROM lihansey/swift:5.2.4-bionic as build
 WORKDIR /build
 
 # First just resolve dependencies.
@@ -34,13 +34,12 @@ COPY --from=build --chown=vapor:vapor /build/.build/debug /app
 COPY --from=build --chown=vapor:vapor /build/Public /app/Public
 
 COPY --from=build --chown=vapor:vapor /build/.env /app
-COPY --from=build --chown=vapor:vapor /build/.env.development.docker.custom_name /app
+COPY --from=build --chown=vapor:vapor /build/.env.development.custom_name /app
 
 # Ensure all further commands run as the vapor user
 USER vapor:vapor
 
 # Start the Vapor service when the image is run, default to listening on 8080 in production environment 
 ENTRYPOINT ["./Run"]
-CMD ["serve", "--env", "development.docker.custom_name"]
-
 # CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
+CMD ["serve", "--env", "development.custom_name"]
