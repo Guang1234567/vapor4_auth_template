@@ -18,7 +18,7 @@ vapor new demo_swift_server_vapor_auth --template https://github.com/Guang123456
 ```
 
 
-### 直接借助 docker 运行 (推荐)
+## 直接借助 docker 运行 (推荐)
 
 3. 安装并登陆 docker
 
@@ -40,7 +40,7 @@ cd demo_swift_server_vapor_auth
 docker pull lihansey/vapor4_auth_template:latest
 
 # 3)
-docker-compose docker-compose up app
+docker-compose up app
 
 # 4) 此时程序正常运行中...
 
@@ -53,15 +53,15 @@ docker-compose down
 docker-compose down --volumes  # --volumes 表示退出程序的同时清理数据库里面的表记录, 但不删除表本身
 
 # 6) 重新运行
-docker-compose docker-compose up app
+docker-compose up app
 
-# 7) 注意此时不需要重新生成或者升级数据库
+# 7) 注意此时(重新运行后)不需要重新生成或者升级数据库
 ❌ docker-compose up migrate 
 
 ```
 
 
-### 手动配置环境运行
+## 手动配置环境运行
 
 3. 安装编译链
 
@@ -125,7 +125,7 @@ content-type: application/json
 ```
 
 
-### 借助 docker 帮助测试人员测试
+## 借助 docker 帮助测试人员测试
 
 此章节主要描述以下几点:
 
@@ -246,16 +246,15 @@ services:
   db:
     image: postgres:12-alpine
     volumes:
-      - db_data:/var/lib/postgresql/data/pgdata
+      - ./docker/db_data:/var/lib/postgresql/data/pgdata
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       <<: *shared_environment
     ports:
       - '5432:5432'
-
 ```
 
-需要注意的是这一段代码, 测试人员可根据自身需求进行改动:
+需要注意的是下面这两段代码, 测试人员可根据自身需求进行改动:
 
 ```yaml
 x-shared_environment: &shared_environment
@@ -268,6 +267,17 @@ x-shared_environment: &shared_environment
   POSTGRES_PASSWORD: vapor_password_dev_custom      # 可改
   POSTGRES_DB: vapor_database_dev_custom            # 可改
 ```
+和
+
+```yaml
+  db:
+    image: postgres:12-alpine
+    volumes:
+      - ./docker/db_data:/var/lib/postgresql/data/pgdata
+```
+
+其中 `./docker/db_data` 是宿主机器的数据库数据存储目录, docker 虚拟机将 `/var/lib/postgresql/data/pgdata` 映射到此目录上.
+
 
 ```bash
 # 4) 测试人员进入 docker-compose.staging.yml 所在目录, 然后运行后端程序
@@ -286,7 +296,7 @@ CONTAINER ID        IMAGE
 e41a632d0a1a        postgres:12-alpine
 
 # e41a632d0a1a 就是当前数据库容器的 id, 接着敲下面的命令备份数据库
-╰─ docker run -i -t --rm --volumes-from e41a632d0a1a  -v $(pwd)/docker/backup:/backup postgres:12-alpine tar cvf /backup/backup_db_postgres_data_2020_08_11_21_40.tar -C /var/lib/postgresql/data/pgdata .
+╰─ docker run -i -t --rm --volumes-from e41a632d0a1a  -v $(pwd)/docker/backup:/backup postgres:12-alpine tar czvf /backup/backup_db_postgres_data_2020_08_11_21_40.tar -C /var/lib/postgresql/data/pgdata .
 
 ```
 
@@ -299,19 +309,61 @@ CONTAINER ID        IMAGE
 79c93dd95d5d        lihansey/vapor4_auth_template:latest
 a51a672d0a1a        postgres:12-alpine
 
-╰─ docker run -i -t --rm --volumes-from a51a672d0a1a  -v $(pwd)/docker/backup:/backup postgres:12-alpine tar cvf /backup/backup_db_postgres_data_2020_08_11_22_00_my.tar -C /var/lib/postgresql/data/pgdata .
+╰─ docker run -i -t --rm --volumes-from a51a672d0a1a  -v $(pwd)/docker/backup:/backup postgres:12-alpine tar czvf /backup/backup_db_postgres_data_2020_08_11_22_00_my.tar -C /var/lib/postgresql/data/pgdata .
 
 # 接着,关闭 docker 运行环境 
 # (要做下面的恢复操作才需要关闭, 如果是测出 bug, 只需不停地调用上面的命令备份数据即可, 然后把 backup_db_postgres_data_2020_08_11_22_00_my.tar 的下载链接粘贴到 issue 界面)
 docker-compose down
 
 # 接着,敲下面的命令恢复数据库数据
-rm -rf ./docker/db_data && mkdir -p ./docker/db_data && tar xzf ./docker/backup/backup_db_postgres_data_2020_08_11_21_40.tar -C ./docker/db_data
+rm -rf ./docker/db_data && mkdir -p ./docker/db_data && tar xzvf ./docker/backup/backup_db_postgres_data_2020_08_11_21_40.tar -C ./docker/db_data
 
-# 最后,重启 docker 运行环境
+# 最后,重新运行 docker
 docker-compose -f docker-compose.staging.yml up app
 
 # 继续测试继续报 bug ...
+```
+
+
+## 重要命令回顾
+
+- 运行
+
+```bash
+docker-compose -f docker-compose.staging.yml up app
+```
+
+- 关闭
+
+```bash
+docker-compose down
+
+# or
+
+docker-compose down --volumes # 关闭的同时清空数据
+```
+
+- 查看当前运行的服务
+
+```bash
+docker container ls
+```
+
+- 备份数据库
+
+```bash
+╰─ docker container ls
+CONTAINER ID        IMAGE
+79c93dd95d5d        lihansey/vapor4_auth_template:latest
+a51a672d0a1a        postgres:12-alpine
+
+╰─ docker run -i -t --rm --volumes-from a51a672d0a1a  -v $(pwd)/docker/backup:/backup postgres:12-alpine tar czvf /backup/backup_db_postgres_data_2020_08_11_22_00_my.tar -C /var/lib/postgresql/data/pgdata .
+```
+
+- 恢复数据库
+
+```bash
+rm -rf ./docker/db_data && mkdir -p ./docker/db_data && tar xzvf ./docker/backup/backup_db_postgres_data_2020_08_11_21_40.tar -C ./docker/db_data
 ```
 
 
