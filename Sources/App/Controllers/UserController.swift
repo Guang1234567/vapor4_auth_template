@@ -1,6 +1,7 @@
 import Fluent
 import Vapor
 import Swift_Coroutine_NIO2
+import RxSwift
 
 
 /// Creates new users and logs them in.
@@ -111,9 +112,9 @@ struct UserController: RouteCollection {
 
         let eventLoop = req.eventLoop
         let ioThreadPool = req.application.threadPool
-        return EventLoopFuture<UserToken>.coroutine(eventLoop) { co in
+        return EventLoopFuture<UserToken>.coroutine(eventLoop: eventLoop, scheduler: eventLoop) { co in
 
-            try co.continueOn(ioThreadPool)
+            try co.continueOn(ioThreadPool) // change scheduler from `eventLoop` to `ioThreadPool`
 
             let token = try user.generateToken()
 
