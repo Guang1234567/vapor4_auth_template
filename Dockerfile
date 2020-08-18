@@ -20,7 +20,7 @@ RUN swift build --enable-test-discovery -Xswiftc -g -c debug -Xlinker -latomic
 # ================================
 # Run image
 # ================================
-FROM swift:5.2-bionic-slim
+FROM swift:5.2.4-bionic-slim
 
 # Create a vapor user and group with /app as its home directory
 RUN useradd --user-group --create-home --system --skel /dev/null --home-dir /app vapor
